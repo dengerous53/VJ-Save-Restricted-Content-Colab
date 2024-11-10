@@ -55,19 +55,6 @@ async def logout(client: Client, message: Message):
 
 @Client.on_message(filters.private & ~filters.forwarded & filters.command(["login"]))
 async def login(bot: Client, message: Message):
-    # Check if the user is a member of the required channel/group
-    if not await is_member(bot, message.from_user.id):
-        await bot.send_message(
-            chat_id=message.chat.id,
-            text=f"👋 Hi {message.from_user.mention}, you must join my channel to use me.",
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("Join ❤️", url=FSUB_INV_LINK)
-            ]]),
-            reply_to_message_id=message.id  
-        )
-        return
-    
-    # Insert or update user session data
     if not database.sessions.find_one({"user_id": message.from_user.id}):
         # Insert default session data for a new user
         database.sessions.insert_one({

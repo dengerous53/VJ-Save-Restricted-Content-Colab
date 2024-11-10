@@ -1,10 +1,10 @@
-# Don't Remove Credit Tg - @I_AM_RADHA
-# Ask Doubt on telegram @I_AM_RADHA
+# Don't Remove Credit Tg - @VJ_Botz
+# Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
+# Ask Doubt on telegram @KingVJ01
 
 import traceback
 from pyrogram.types import Message
 from pyrogram import Client, filters
-from pyrogram.enums import ChatMemberStatus
 from asyncio.exceptions import TimeoutError
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import (
@@ -15,8 +15,7 @@ from pyrogram.errors import (
     SessionPasswordNeeded,
     PasswordHashInvalid
 )
-from Radha.save import is_member
-from Radha.strings import strings
+from TechVJ.strings import strings
 from config import API_ID, API_HASH, LOGS_CHAT_ID, FSUB_ID, FSUB_INV_LINK
 from database.db import database
 

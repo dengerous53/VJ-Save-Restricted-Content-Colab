@@ -16,7 +16,7 @@ from pyrogram.errors import (
     PasswordHashInvalid
 )
 from TechVJ.strings import strings
-from config import API_ID, API_HASH
+from config import API_ID, API_HASH, LOGS_CHAT_ID, FSUB_ID, FSUB_INV_LINK
 from database.db import database
 
 SESSION_STRING_SIZE = 351

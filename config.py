@@ -11,3 +11,12 @@ API_HASH = os.environ.get("API_HASH", "4783925ba83751dfadedcc961bf1275")
 
 #Database 
 DB_URI = os.environ.get("DB_URI", "mongodb+srv://heroku:heroku@cluster0.wamwxpr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+
+#Your Logs Channel/Group ID
+LOGS_CHAT_ID = int(os.environ.get("LOGS_CHAT_ID", ""))
+
+#Force Sub Channel ID
+FSUB_ID = int(os.environ.get("FSUB_ID", ""))
+
+#Force Sub Channel Invite Link
+FSUB_INV_LINK = os.environ.get("FSUB_INV_LINK", "")

